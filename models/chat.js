@@ -1,27 +1,24 @@
 const connection = require('./connection');
 
-const getAllConversation = async () => {
-  connection()
-    .then((db) => {
-      db.collection('messages').find().toArray();
-    });
-};
-
 const clearChat = async () =>
   connection()
-    .then((db) => {
-      db.collection('messages').deleteMany({});
-    });
+  .then((db) => db.collection('messages')
+  .deleteMany({}));
 
-const saveMessages = async (message) => {
+const saveMessage = async (message) => {
   connection()
-    .then((db) => {
-      db.collection('messages').insertOne(message);
-    });
+  .then((db) => db.collection('messages')
+  .insertOne(message));
 };
+
+const getMessages = async () =>
+  connection()
+  .then((db) => db.collection('messages')
+  .find()
+  .toArray());
 
 module.exports = {
   clearChat,
-  saveMessages,
-  getAllConversation,
+  saveMessage,
+  getMessages,
 };

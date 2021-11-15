@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <title>Trybe Typing</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <h1>Trybe Typing</h1>
+    <span>Change nickname</span>
+    <input data-testid="nickname-box" type="text" id="nick-input" />
+    <button id="send-nick-btn" data-testid="nickname-button">Change</button>
+    <strong>Online users</strong>
+    <ul id="user-list"></ul>
+    <h2>Online Chat</h2>
+    <ul id='msg-list'>
+      <% chatHistory.forEach(( e ) => { %>
+        <li data-testid="message">
+          <%= e.time %> - <%= e.nickname %>: <%= e.message %>
+        </li>
+      <% }) %>
+    </ul>
+    <input data-testid="message-box" type="text" id="msg-input" />
+    <button type="button" id="send-msg-btn" data-testid="send-button">Send</button>
+    <script src="../scripts/script.js"></script>
+  </body>
+</html>
