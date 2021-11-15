@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>Trybe Typing</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+
+  <body>
+    <h1>Trybe Typing</h1>
+    <span>Talk to strangers!</span>
+    <strong>Change nick here!</strong>
+    <input data-testid="nickname-box" type="text" id="nickname">
+    <button id="nickname-btn" data-testid="nickname-button">
+      Ok
+    </button>
+    <strong>Online now:</strong>
+    <ul id="users"></ul>
+    <h3>Chat</h3>
+    <ul id='chat'>
+      <% chatHistory.forEach(( msg )=> { %>
+        <li data-testid="message">
+          <%= msg.time %> - <%= msg.nickname %>: <%= msg.message %>
+        </li>
+      <% }) %>
+    </ul>
+    <input data-testid="message-box" type="text" id="message-box">
+    <button type="button" id="send-button" data-testid="send-button">
+      Send
+    </button>
+    <script>
+      const socket = io();
+      const sendBtn = document.querySelector('#send-button');
+      const messageBox = document.querySelector('#message-box');
+      const chat = document.querySelector('#chat');
+      const nickname = document.querySelector('#nickname');
+      const nicknameBtn = document.querySelector('#nickname-btn');
+      const users = document.querySelector('#users');
+      const setRandomNick = `User-${Math.random().toString(20).substr(2, 11)}`;
+
+      sendBtn.addEventListener('click', () => {
+        const user = sessionStorage.getItem('nickname');
+        socket.emit('message', { nickname: user, chatMessage: messageBox.value });
+        messageBox.value = ''
+
+        return false;
+      });
+
+      nicknameBtn.addEventListener('click', () => {
+        socket.emit('changeNick', nickname.value);
+        nickname.value = '';
+        return false;
+      });
+
+      socket.on('message', (message) => {
+        const li = document.createElement('li');
+        li.setAttribute("data-testid", "message");
+        li.innerText = message;
+        chat.appendChild(li)
+      });
+
+      socket.on('users', (online) => {
+        users.innerHTML = '';
+        const on = online.find((user) => user.id === socket.id);
+        const filteredUser = online.filter((user) => user.id !== socket.id);
+        filteredUser.unshift(on);
+        filteredUser.forEach((user) => {
+          const li = document.createElement('li');
+            li.setAttribute("data-testid", "online-user");
+
+            if (user.id === socket.id) {
+              sessionStorage.setItem('nickname', user.nickname);
+            }
+
+            li.innerText = user.nickname;
+            users.appendChild(li);
+          });
+        });
+        socket.emit('online', setRandomNick);
+    </script>
+  </body>
+
+</html>
