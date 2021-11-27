@@ -59,3 +59,6 @@ io.on('connection', (socket) => {
 http.listen(PORT, () => {
   console.log(`Listening at port ${PORT}!`);
 });
+
+// Agradecimentos especiais ao meu colega de turma Luiz Paulo Lima, da turma 10-B, que me ajudou com dúvidas que estavam me impedindo de evoluir no projeto e me direcionou, com ajuda de seu PR. Valeu, Luiz!
+// PR do Luiz: https://github.com/tryber/sd-010-b-project-webchat/pull/82

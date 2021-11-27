@@ -1,13 +1,14 @@
 const socket = window.io();
-const sendMsgBtn = document.querySelector('#send-msg-btn');
-const msgInput = document.querySelector('#msg-input');
-const msgList = document.querySelector('#msg-list');
-const nickInput = document.querySelector('#nick-input');
-const sendNickBtn = document.querySelector('#send-nick-btn');
-const userList = document.querySelector('#user-list');
-const randomNickname = `User-${Math.random().toString(20).substr(2, 11)}`;
 
-sendMsgBtn.addEventListener('click', () => {
+const send = document.querySelector('#send');
+const msgInput = document.querySelector('#textMessage');
+const chatMessage = document.querySelector('#chatMessage');
+const nick = document.querySelector('#nick');
+const sendNick = document.querySelector('#sendNick');
+const users = document.querySelector('#users');
+const randomNick = `User-${Math.random().toString(20).substr(2, 11)}`;
+
+send.addEventListener('click', () => {
   const user = sessionStorage.getItem('nickname');
   socket.emit('message', { nickname: user, chatMessage: msgInput.value });
   msgInput.value = '';
@@ -15,9 +16,9 @@ sendMsgBtn.addEventListener('click', () => {
   return false;
 });
 
-sendNickBtn.addEventListener('click', () => {
-  socket.emit('changeNickname', nickInput.value);
-  nickInput.value = '';
+sendNick.addEventListener('click', () => {
+  socket.emit('changeNickname', nick.value);
+  nick.value = '';
 
   return false;
 });
@@ -26,25 +27,25 @@ socket.on('message', (message) => {
   const li = document.createElement('li');
   li.setAttribute('data-testid', 'message');
   li.innerText = message;
-  msgList.appendChild(li);
+  chatMessage.appendChild(li);
 });
 
 socket.on('users', (online) => {
-  userList.innerHTML = '';
-    const active = online.find((e) => e.id === socket.id);
-    const filtered = online.filter((e) => e.id !== socket.id);
-    filtered.unshift(active);
-    filtered.forEach((e) => {
-      const li = document.createElement('li');
-      li.setAttribute('data-testid', 'online-user');
+  users.innerHTML = '';
+  const active = online.find((element) => element.id === socket.id);
+  const filtered = online.filter((element) => element.id !== socket.id);
+  
+  filtered.unshift(active);
+  filtered.forEach((element) => {
+    const li = document.createElement('li');
+    li.setAttribute('data-testid', 'online-user');
 
-      if (e.id === socket.id) {
-        sessionStorage.setItem('nickname', e.nickname);
-      }
-
-      li.innerText = e.nickname;
-      userList.appendChild(li);
-    });
+    if (element.id === socket.id) {
+      sessionStorage.setItem('nickname', element.nickname);
+    }
+    li.innerText = element.nickname;
+    users.appendChild(li);
   });
+});
 
-  socket.emit('online', randomNickname);
+socket.emit('online', randomNick);
